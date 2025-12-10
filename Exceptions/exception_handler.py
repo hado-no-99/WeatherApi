@@ -1,7 +1,5 @@
-from fastapi import FastAPI, RequestValidationError
+from fastapi import Request
 
-app = FastAPI()
 
-@app.exception_handler(RequestValidationError)
-def validation_error_handler(req, excep):
-	return type(excep)
+def req_validation_error_handler(request: Request, exc: Exception):
+	return type(exc)
