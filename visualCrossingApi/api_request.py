@@ -11,9 +11,10 @@ r = redis.Redis(host="localhost", port=6379, db=0)
 load_dotenv()
 
 def fetch_weather(url):
+	print(url.path)
 	cache_result = get_cache(r, url.path)
 	if cache_result:
-		print(f"Fetched from cache ->> {url.path}: {cache_result}")
+		print(f"Fetched from cache ->>")
 		return json.loads(lz4.frame.decompress(cache_result))
 
 	localBaseUrl = "http://localhost:8000/"
@@ -25,7 +26,7 @@ def fetch_weather(url):
 
 	result = requests.get(query_url, params=api_key_param).json()
 	set_cache(r, url.path, lz4.frame.compress(json.dumps(result).encode()))
-	# print(f"Data saved into cache ->> {url.path}: {result}")
+	print(f"Data saved into cache ->")
 	return result
 
 
