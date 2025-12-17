@@ -7,9 +7,16 @@ import requests
 import lz4.frame
 import urllib.parse
 
-# date_pattern = r"^\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|[1-2][0-9]|3[0-1])$"
-# temp = "1999-01-31"
-# match = re.search(date_pattern, temp)
+
+month = r"(?:0?[1-9]|1[0-2])"
+day = r"(?:0?[1-9]|[1-2][0-9]|3[0-1])"
+year=r"\d{4}"
+hour= r""
+time=r"T"
+date_pattern = rf"^{year}-{month}-{day}$"
+temp = "1999-01"
+match = re.search(date_pattern, temp)
+print(date_pattern)
 # pattern2=r"^\d+|(?:\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|[1-2][0-9]|3[0-1]))$"
 # temp2 = "222222"
 # match2 = re.fullmatch(pattern2, temp2)
@@ -21,7 +28,8 @@ r = redis.Redis(host='localhost', port=6379, db=0)
 result = RedisCache.cache.get_cache(r, "hello")
 temp_site = "https://www.google.com/path1/path2?search=&index=1" 
 parsed_url = urllib.parse.urlparse(temp_site)
-print(parsed_url.path + '?' + parsed_url.query)
+# print(parsed_url.path + '?' + parsed_url.query)
+
 temp_req = requests.get(temp_site)
 # print(type(temp_req.json()))
 # print(result.decode())

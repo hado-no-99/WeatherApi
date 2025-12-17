@@ -4,7 +4,7 @@ import os
 from RedisCache.cache import set_cache, get_cache
 import redis
 import json
-from utils.helper import get_path_query
+from utils.helper import get_path_query_params
 import lz4.frame
 
 
@@ -13,8 +13,9 @@ r = redis.Redis(host="localhost", port=6379, db=0)
 load_dotenv()
 
 def fetch_weather(url):
-	print(url.path)
-	cache_result = get_cache(r, url.path)
+	url_params = get_path_query_params(url)
+	print(url_params)
+	cache_result = get_cache(r, url_params)
 	if cache_result:
 		print(f"Fetched from cache ->>")
 		return json.loads(lz4.frame.decompress(cache_result))
@@ -28,8 +29,8 @@ def fetch_weather(url):
 	api_key_param = {"key": api_key}
 
 	result = requests.get(query_url, params=api_key_param).json()
-	set_cache(r, url.path, lz4.frame.compress(json.dumps(result).encode()))
-	print(f"Data saved into cache ->")
+	set_cache(r, url_params, lz4.frame.compress(json.dumps(result).encode()))
+	print(f"Data saved into cache ->>")
 	return result
 
 
