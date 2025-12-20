@@ -4,27 +4,33 @@ from fastapi import Depends, FastAPI, Request
 from models.endpoint_models import weatherReqParams
 from visualCrossingApi.api_request import fetch_weather
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 import redis
 from RedisCache.cache import set_cache, get_cache
+import time
+from RateLimiter.logic import ratelimit
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 
 app = FastAPI()
 
+@app.get('/test')
+async def rate_limiting_testing(request: Request, ratelimiter = Depends(ratelimit)):
+    return PlainTextResponse("API HITTING")
+
 @app.get('/{location}')
-def get_weather_by_location(request: Request, params: weatherReqParams = Depends(weatherReqParams)):
+def get_weather_by_location(request: Request, params: weatherReqParams = Depends(weatherReqParams), ratelimiter=Depends(ratelimit)):
     return fetch_weather(request.url)
 
 
 @app.get('/{location}/{datetime1}')
-def get_weather_by_location_datetime1(request: Request, params: weatherReqParams = Depends(weatherReqParams)):
+def get_weather_by_location_datetime1(request: Request, params: weatherReqParams = Depends(weatherReqParams), ratelimiter=Depends(ratelimit)):
     return fetch_weather(request.url)
     
 
 
 @app.get('/{location}/{datetime1}/{datetime2}')
-def get_weather_by_location_datetime1_datetime2(request: Request, params: weatherReqParams = Depends(weatherReqParams)):
+def get_weather_by_location_datetime1_datetime2(request: Request, params: weatherReqParams = Depends(weatherReqParams), ratelimiter=Depends(ratelimit)):
     return fetch_weather(request.url)
 
 
